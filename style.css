@@ -1,6 +1,6 @@
 body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f4; /* Light grey background */
+    font-family: 'Google Sans', Roboto, Arial, sans-serif; /* Using a Google font for a similar feel */
+    background-color: #f8f9fa; /* Very light grey background */
     margin: 0;
     padding: 0;
     display: flex;
@@ -10,167 +10,124 @@ body {
 }
 
 .chat-container {
-    background-color: #2A2A2E; /* Dark Grey container background */
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
-    width: 90%;
-    max-width: 700px;
+    background-color: #fff; /* White chat container background */
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 95%;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    color: #ffffff; /* Light text color for dark background */
 }
 
 #messagesContainer {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
-    max-height: 70vh;
+    max-height: 75vh; /* Slightly increased max height */
     display: flex;
-    flex-direction: column; /* To arrange messages from top to bottom */
+    flex-direction: column;
+    gap: 10px; /* Space between messages */
+}
+
+.message {
+    padding: 12px 18px;
+    border-radius: 20px;
+    max-width: 70%; /* Adjust max width for better flow */
+    white-space: pre-wrap;
+    line-height: 1.5;
+    word-break: break-word;
+    margin-bottom: 8px; /* Space between message bubbles */
+    position: relative; /* For potential avatar/indicator */
+}
+
+.message.user {
+    background-color: #e8f0fe; /* Light blue for user messages */
+    color: #1a73e8; /* Blue text for user messages */
+    align-self: flex-end;
+    border-bottom-right-radius: 4px; /* Slightly different rounding for user */
+}
+
+.message.bot {
+    background-color: #f1f3f4; /* Light grey for bot messages */
+    color: #3c4043; /* Dark grey text for bot messages */
+    align-self: flex-start;
+    border-bottom-left-radius: 4px; /* Slightly different rounding for bot */
+}
+
+.timestamp {
+    font-size: 11px;
+    color: #777;
+    position: absolute;
+    bottom: 2px;
+    right: 10px;
+}
+
+.message.bot .timestamp {
+    left: 10px;
+    right: auto;
 }
 
 .input-area {
     display: flex;
-    border-top: 1px solid #444; /* Darker border for input area */
-    padding: 15px;
+    padding: 15px 20px;
     gap: 10px;
-    background-color: #2A2A2E; /* Match container background */
+    background-color: #fff;
+    border-top: 1px solid #e0e0e0;
 }
 
 #messageInput {
     flex-grow: 1;
-    padding: 12px;
+    padding: 14px;
     font-size: 16px;
-    border: 1px solid #555; /* Darker border for input */
-    border-radius: 8px;
-    color: #ffffff; /* Light text color */
-    background-color: #333; /* Slightly lighter dark background */
+    border: 1px solid #d4d4d4;
+    border-radius: 24px;
+    outline: none;
+    background-color: #f1f3f4;
+    color: #202124;
 }
 
 #messageInput::placeholder {
-    color: #888; /* Light grey placeholder text */
+    color: #70757a;
 }
 
 #sendButton {
-    padding: 12px 20px;
-    background-color: #008E55; /* Nathan Green button background */
+    padding: 14px 24px;
+    background-color: #1a73e8; /* Blue send button */
     color: white;
     border: none;
-    border-radius: 8px;
-    font-weight: bold;
+    border-radius: 24px;
+    font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease-in-out;
 }
 
 #sendButton:hover {
-    background-color: #006B44; /* Darker shade of Nathan Green on hover */
+    background-color: #0c66c9;
 }
 
-.message-bubble {
-    padding: 10px 15px;
-    margin: 10px 0;
-    border-radius: 12px;
-    max-width: 80%; /* Adjust max width for visual spacing */
-    white-space: pre-wrap;
-    line-height: 1.5;
+/* Adjustments for Markdown in bot messages */
+.message.bot h1, .message.bot h2, .message.bot h3 { color: #202124; }
+.message.bot p, .message.bot ul, .message.bot ol, .message.bot li, .message.bot blockquote, .message.bot code { color: #3c4043; }
+.message.bot table, .message.bot th, .message.bot td { border-color: #e0e0e0; }
+.message.bot th { background-color: #f8f9fa; color: #202124; }
+
+/* Basic loading animation */
+.message.bot.loading {
+    color: #777;
 }
 
-.message-user {
-    background-color: #008E55; /* Nathan Green for user messages */
-    color: white;
-    align-self: flex-end;
-}
-
-.message-ai {
-    background-color: #333; /* Slightly lighter dark grey for AI messages */
-    color: #eee;
-    align-self: flex-start;
-}
-
-.message-timestamp {
-    font-size: 12px;
-    color: #999;
-    margin-top: 4px;
-    text-align: right;
-}
-
-/* Markdown formatting inside AI responses (adjust text color for dark theme) */
-.message-ai h1,
-.message-ai h2,
-.message-ai h3 {
-    font-weight: bold;
-    margin: 10px 0 5px;
-    color: #ddd;
-}
-
-.message-ai p {
-    margin: 8px 0;
-    color: #eee;
-}
-
-.message-ai ul {
-    margin: 5px 0 10px 20px;
-    color: #eee;
-}
-
-.message-ai table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #eee;
-}
-
-.message-ai th,
-.message-ai td {
-    border: 1px solid #555;
-    padding: 8px;
+.message.bot.loading::after {
+    content: '...';
+    display: inline-block;
+    width: 1.5em;
     text-align: left;
+    animation: ellipsis 1.5s infinite;
 }
 
-.message-ai th {
-    background-color: #444;
-    color: #ddd;
-}
-
-.message-ai img {
-    max-width: 100%;
-    margin-top: 10px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* Darker shadow for images */
-}
-
-/* Loader dot animation (adjust color for dark theme) */
-.loading-dots {
-    display: inline-block;
-    text-align: center;
-    font-size: 20px;
-    padding: 10px;
-    color: #ffffff; /* White dots */
-}
-.loading-dots span {
-    display: inline-block;
-    animation: bounce 1.2s infinite ease-in-out both;
-    background-color: #008E55; /* Nathan Green dots */
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    margin: 0 3px;
-}
-.loading-dots span:nth-child(2) {
-    animation-delay: 0.2s;
-}
-.loading-dots span:nth-child(3) {
-    animation-delay: 0.4s;
-}
-@keyframes bounce {
-    0%, 80%, 100% {
-        transform: translateY(0);
-        opacity: 0.6;
-    }
-    40% {
-        transform: translateY(-10px);
-        opacity: 1;
-    }
+@keyframes ellipsis {
+    0%   { content: '.'; }
+    33%  { content: '..'; }
+    66%  { content: '...'; }
+    100% { content: ''; }
 }
