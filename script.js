@@ -4,12 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const messagesContainer = document.getElementById('messagesContainer');
     const webhookUrl = 'https://strategaize.app.n8n.cloud/webhook/chat-ui';
 
-    // Generate a unique session ID once per user session
-    const sessionId = localStorage.getItem('chatSessionId') || (() => {
-        const id = crypto.randomUUID?.() || Date.now().toString();
-        localStorage.setItem('chatSessionId', id);
-        return id;
-    })();
+    // --- Local Storage Chat History ---
+
+    // Function to save the chat history to Local Storage
+    function saveChatHistory(history) {
+        localStorage.setItem('chatHistory', JSON.stringify(history));
+    }
+
+    // Function to load the chat history from Local Storage
+    function loadChatHistory() {
+        const storedHistory = localStorage.getItem('chatHistory');
+        return storedHistory ? JSON.parse(storedHistory) : [];
+    }
+
+    // Initialize chat history from Local Storage
+    let chatHistory = loadChatHistory();
+
+    // --- End Local Storage Chat History ---
 
     function createMessageElement(content, sender = 'bot') {
         const messageEl = document.createElement('div');
@@ -32,6 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
         messageEl.appendChild(timestamp);
         messagesContainer.appendChild(messageEl);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // --- Save message to chat history ---
+        const message = { sender: sender, content: content, timestamp: new Date().toLocaleTimeString() };
+        chatHistory.push(message);
+        saveChatHistory(chatHistory);
+        // --- End Save message to chat history ---
+
+        return messageEl;
     }
 
     function showLoading() {
@@ -98,6 +117,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // --- Save message to chat history ---
+        const message = {
+            sender: 'bot',
+            content: `<img src="${thumbnailSrc}" alt="Chart Thumbnail">`, // Store thumbnail URL
+            timestamp: new Date().toLocaleTimeString()
+        };
+        chatHistory.push(message);
+        saveChatHistory(chatHistory);
+        // --- End Save message to chat history ---
+
         return messageEl;
     }
 
@@ -154,4 +183,10 @@ document.addEventListener('DOMContentLoaded', () => {
             sendButton.click();
         }
     });
+
+    // --- Display saved chat history on page load ---
+    chatHistory.forEach(message => {
+        createMessageElement(message.content, message.sender);
+    });
+    // --- End Display saved chat history on page load ---
 });
