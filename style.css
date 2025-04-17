@@ -11,15 +11,16 @@ body {
 }
 
 .chat-container {
-  background-color: #2a2a2e;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  width: 95%;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  color: #e0e0e0;
+    background-color: #2c2c2c;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 95%;
+    max-width: 1000px; /* ← Increased from 800px */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #e0e0e0;
+    margin: 30px auto; /* Optional: add spacing around container */
 }
 
 #messagesContainer {
