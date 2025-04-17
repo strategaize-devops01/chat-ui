@@ -3,68 +3,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const sendButton = document.getElementById('sendButton');
     const messagesContainer = document.getElementById('messagesContainer');
     const webhookUrl = 'https://strategaize.app.n8n.cloud/webhook/chat-ui';
-    let sessionId = localStorage.getItem('chatSessionId') || generateSessionId();
 
-    localStorage.setItem('chatSessionId', sessionId);
+    // Generate a unique session ID once per user session
+    const sessionId = localStorage.getItem('chatSessionId') || (() => {
+        const id = crypto.randomUUID?.() || Date.now().toString();
+        localStorage.setItem('chatSessionId', id);
+        return id;
+    })();
+
+    function createMessageElement(content, sender = 'bot') {
+        const messageEl = document.createElement('div');
+        messageEl.classList.add('message', sender);
+
+        if (sender === 'bot') {
+            messageEl.innerHTML = marked.parse(content);
+        } else {
+            messageEl.textContent = content;
+        }
+
+        const timestamp = document.createElement('div');
+        timestamp.classList.add('timestamp');
+        timestamp.textContent = new Date().toLocaleTimeString();
+
+        messageEl.appendChild(timestamp);
+        messagesContainer.appendChild(messageEl);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function showLoading() {
+        const loadingEl = document.createElement('div');
+        loadingEl.classList.add('message', 'bot', 'loading');
+        loadingEl.setAttribute('id', 'loadingMessage');
+        loadingEl.textContent = 'Thinking...';
+        messagesContainer.appendChild(loadingEl);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    function hideLoading() {
+        const loadingEl = document.getElementById('loadingMessage');
+        if (loadingEl) loadingEl.remove();
+    }
 
     sendButton.addEventListener('click', () => {
         const message = messageInput.value.trim();
         if (!message) return;
 
-        appendMessage('user', message);
+        // Add user message
+        createMessageElement(message, 'user');
         messageInput.value = '';
+
+        // Show loading animation
         showLoading();
 
+        // Send message to webhook
         fetch(webhookUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ chatInput: message, sessionId }),
+            body: JSON.stringify({
+                chatInput: message,
+                sessionId: sessionId
+            }),
         })
-        .then(res => res.json())
+        .then(response => response.json())
         .then(data => {
-            removeLoading();
-            appendMessage('bot', data.output || 'No response');
+            hideLoading();
+            if (data.output) {
+                createMessageElement(data.output, 'bot');
+            } else {
+                createMessageElement('No response received.', 'bot');
+            }
         })
-        .catch(() => {
-            removeLoading();
-            appendMessage('bot', '❌ Error getting response.');
+        .catch(err => {
+            console.error('Error:', err);
+            hideLoading();
+            createMessageElement('Something went wrong.', 'bot');
         });
     });
 
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendButton.click();
+    messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendButton.click();
+        }
     });
-
-    function generateSessionId() {
-        return `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-    }
-
-    function appendMessage(sender, text) {
-        const wrapper = document.createElement('div');
-        wrapper.className = `message-bubble ${sender}`;
-        wrapper.innerHTML = `
-            <div class="message-text">${text}</div>
-            <div class="timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
-        `;
-        messagesContainer.appendChild(wrapper);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function showLoading() {
-        const loader = document.createElement('div');
-        loader.className = 'message-bubble bot loading';
-        loader.id = 'loadingBubble';
-        loader.innerHTML = `
-            <div class="dot-flashing"></div>
-        `;
-        messagesContainer.appendChild(loader);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function removeLoading() {
-        const loader = document.getElementById('loadingBubble');
-        if (loader) loader.remove();
-    }
 });
