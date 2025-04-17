@@ -1,6 +1,6 @@
 body {
-    font-family: 'Google Sans', Roboto, Arial, sans-serif; /* Using a Google font for a similar feel */
-    background-color: #f8f9fa; /* Very light grey background */
+    font-family: 'Google Sans', Roboto, Arial, sans-serif;
+    background-color: #1e1e1e; /* Dark grey background */
     margin: 0;
     padding: 0;
     display: flex;
@@ -10,49 +10,50 @@ body {
 }
 
 .chat-container {
-    background-color: #fff; /* White chat container background */
+    background-color: #2c2c2c; /* Slightly lighter dark grey container */
     border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     width: 95%;
     max-width: 800px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    color: #e0e0e0; /* Light text color */
 }
 
 #messagesContainer {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
-    max-height: 75vh; /* Slightly increased max height */
+    max-height: 75vh;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Space between messages */
+    gap: 10px;
 }
 
 .message {
     padding: 12px 18px;
     border-radius: 20px;
-    max-width: 70%; /* Adjust max width for better flow */
+    max-width: 70%;
     white-space: pre-wrap;
     line-height: 1.5;
     word-break: break-word;
-    margin-bottom: 8px; /* Space between message bubbles */
-    position: relative; /* For potential avatar/indicator */
+    margin-bottom: 8px;
+    position: relative;
 }
 
 .message.user {
-    background-color: #e8f0fe; /* Light blue for user messages */
-    color: #1a73e8; /* Blue text for user messages */
+    background-color: #333; /* Darker grey for user messages */
+    color: #b3b3b3;
     align-self: flex-end;
-    border-bottom-right-radius: 4px; /* Slightly different rounding for user */
+    border-bottom-right-radius: 4px;
 }
 
 .message.bot {
-    background-color: #f1f3f4; /* Light grey for bot messages */
-    color: #3c4043; /* Dark grey text for bot messages */
+    background-color: #444; /* Slightly lighter grey for bot messages */
+    color: #d4d4d4;
     align-self: flex-start;
-    border-bottom-left-radius: 4px; /* Slightly different rounding for bot */
+    border-bottom-left-radius: 4px;
 }
 
 .timestamp {
@@ -72,28 +73,28 @@ body {
     display: flex;
     padding: 15px 20px;
     gap: 10px;
-    background-color: #fff;
-    border-top: 1px solid #e0e0e0;
+    background-color: #2c2c2c; /* Match container background */
+    border-top: 1px solid #444;
 }
 
 #messageInput {
     flex-grow: 1;
     padding: 14px;
     font-size: 16px;
-    border: 1px solid #d4d4d4;
+    border: 1px solid #555;
     border-radius: 24px;
     outline: none;
-    background-color: #f1f3f4;
-    color: #202124;
+    background-color: #333; /* Dark input background */
+    color: #e0e0e0;
 }
 
 #messageInput::placeholder {
-    color: #70757a;
+    color: #777;
 }
 
 #sendButton {
     padding: 14px 24px;
-    background-color: #1a73e8; /* Blue send button */
+    background-color: #008E55; /* Nathan Green send button */
     color: white;
     border: none;
     border-radius: 24px;
@@ -103,18 +104,18 @@ body {
 }
 
 #sendButton:hover {
-    background-color: #0c66c9;
+    background-color: #006B44;
 }
 
 /* Adjustments for Markdown in bot messages */
-.message.bot h1, .message.bot h2, .message.bot h3 { color: #202124; }
-.message.bot p, .message.bot ul, .message.bot ol, .message.bot li, .message.bot blockquote, .message.bot code { color: #3c4043; }
-.message.bot table, .message.bot th, .message.bot td { border-color: #e0e0e0; }
-.message.bot th { background-color: #f8f9fa; color: #202124; }
+.message.bot h1, .message.bot h2, .message.bot h3 { color: #ccc; }
+.message.bot p, .message.bot ul, .message.bot ol, .message.bot li, .message.bot blockquote, .message.bot code { color: #d4d4d4; }
+.message.bot table, .message.bot th, .message.bot td { border-color: #555; }
+.message.bot th { background-color: #444; color: #ccc; }
 
 /* Basic loading animation */
 .message.bot.loading {
-    color: #777;
+    color: #999;
 }
 
 .message.bot.loading::after {
