@@ -55,6 +55,57 @@ body {
     align-self: flex-start;
     border-bottom-left-radius: 4px;
 }
+.message.bot {
+    position: relative; /* Needed for overlay positioning */
+}
+
+.chart-thumbnail {
+    cursor: pointer;
+    max-width: 90%; /* Or a fixed width like 400px */
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+}
+
+.chart-overlay {
+    display: none;
+    position: fixed; /* Or absolute within .message.bot */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* Darker overlay */
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Center vertically too */
+}
+
+.chart-overlay img {
+    max-width: 80%; /* Or a specific size */
+    max-height: 80%;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Stronger shadow on expanded */
+}
+
+.chart-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border-radius: 5px;
+}
+.chart-overlay p {
+    color: white;
+    margin-top: 10px;
+    font-size: 14px;
+}
 
 .timestamp {
     font-size: 11px;
