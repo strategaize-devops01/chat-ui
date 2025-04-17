@@ -4,19 +4,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const messagesContainer = document.getElementById('messagesContainer');
     const webhookUrl = 'https://strategaize.app.n8n.cloud/webhook/chat-ui';
 
-    // Generate or retrieve a persistent session ID
     const sessionId = localStorage.getItem('chatSessionId') || (() => {
         const newId = crypto.randomUUID?.() || Date.now().toString();
         localStorage.setItem('chatSessionId', newId);
         return newId;
     })();
 
-    // Load and save chat history
     const loadChatHistory = () => JSON.parse(localStorage.getItem('chatHistory') || '[]');
     const saveChatHistory = (history) => localStorage.setItem('chatHistory', JSON.stringify(history));
     let chatHistory = loadChatHistory();
 
-    // Utility to scroll to the bottom
     const scrollToBottom = () => {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     };
@@ -69,47 +66,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createChartMessageWithOverlay(thumbnailSrc, fullSrc, description = '') {
-        const messageEl = document.createElement('div');
-        messageEl.classList.add('message', 'bot');
+        const chartImg = document.createElement('img');
+        chartImg.src = thumbnailSrc;
+        chartImg.classList.add('chart-outside');
+        messagesContainer.appendChild(chartImg);
 
-        const avatar = document.createElement('div');
-        avatar.classList.add('avatar', 'bot');
-        messageEl.appendChild(avatar);
+        const descriptionText = document.createElement('div');
+        descriptionText.classList.add('chart-description');
+        descriptionText.innerHTML = marked.parse(description);
+        messagesContainer.appendChild(descriptionText);
 
-        const thumbnail = document.createElement('img');
-        thumbnail.src = thumbnailSrc;
-        thumbnail.classList.add('chart-thumbnail');
-        messageEl.appendChild(thumbnail);
-
-        const overlay = document.createElement('div');
-        overlay.classList.add('chart-overlay');
-
-        const fullImg = document.createElement('img');
-        fullImg.src = fullSrc;
-        overlay.appendChild(fullImg);
-
-        if (description) {
-            const desc = document.createElement('p');
-            desc.textContent = description;
-            overlay.appendChild(desc);
-        }
-
-        const closeBtn = document.createElement('span');
-        closeBtn.classList.add('chart-close-button');
-        closeBtn.textContent = '×';
-        overlay.appendChild(closeBtn);
-
-        closeBtn.addEventListener('click', () => overlay.style.display = 'none');
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) overlay.style.display = 'none';
-        });
-
-        thumbnail.addEventListener('click', () => {
-            overlay.style.display = 'flex';
-        });
-
-        messageEl.appendChild(overlay);
-        messagesContainer.appendChild(messageEl);
         scrollToBottom();
 
         chatHistory.push({
@@ -137,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Check if it's a chart object with images
             if (typeof data.output === 'object' && data.output.chartThumbnail) {
                 createChartMessageWithOverlay(
                     data.output.chartThumbnail,
@@ -166,6 +131,5 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') sendButton.click();
     });
 
-    // Load chat history on page load
     chatHistory.forEach(m => createMessageElement(m.content, m.sender));
 });
