@@ -1,6 +1,6 @@
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f4f4;
+    background-color: #f4f4f4; /* Light grey background */
     margin: 0;
     padding: 0;
     display: flex;
@@ -10,14 +10,15 @@ body {
 }
 
 .chat-container {
-    background-color: #ffffff;
+    background-color: #2A2A2E; /* Dark Grey container background */
     border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Slightly darker shadow */
     width: 90%;
     max-width: 700px;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    color: #ffffff; /* Light text color for dark background */
 }
 
 #messagesContainer {
@@ -25,27 +26,35 @@ body {
     padding: 20px;
     overflow-y: auto;
     max-height: 70vh;
+    display: flex;
+    flex-direction: column; /* To arrange messages from top to bottom */
 }
 
 .input-area {
     display: flex;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid #444; /* Darker border for input area */
     padding: 15px;
     gap: 10px;
-    background-color: #fafafa;
+    background-color: #2A2A2E; /* Match container background */
 }
 
 #messageInput {
     flex-grow: 1;
     padding: 12px;
     font-size: 16px;
-    border: 1px solid #ccc;
+    border: 1px solid #555; /* Darker border for input */
     border-radius: 8px;
+    color: #ffffff; /* Light text color */
+    background-color: #333; /* Slightly lighter dark background */
+}
+
+#messageInput::placeholder {
+    color: #888; /* Light grey placeholder text */
 }
 
 #sendButton {
     padding: 12px 20px;
-    background-color: #007bff;
+    background-color: #008E55; /* Nathan Green button background */
     color: white;
     border: none;
     border-radius: 8px;
@@ -55,25 +64,27 @@ body {
 }
 
 #sendButton:hover {
-    background-color: #0056b3;
+    background-color: #006B44; /* Darker shade of Nathan Green on hover */
 }
 
 .message-bubble {
     padding: 10px 15px;
     margin: 10px 0;
     border-radius: 12px;
-    max-width: 90%;
+    max-width: 80%; /* Adjust max width for visual spacing */
     white-space: pre-wrap;
     line-height: 1.5;
 }
 
 .message-user {
-    background-color: #dcf8c6;
+    background-color: #008E55; /* Nathan Green for user messages */
+    color: white;
     align-self: flex-end;
 }
 
 .message-ai {
-    background-color: #f0f0f0;
+    background-color: #333; /* Slightly lighter dark grey for AI messages */
+    color: #eee;
     align-self: flex-start;
 }
 
@@ -84,20 +95,23 @@ body {
     text-align: right;
 }
 
-/* Markdown formatting inside AI responses */
+/* Markdown formatting inside AI responses (adjust text color for dark theme) */
 .message-ai h1,
 .message-ai h2,
 .message-ai h3 {
     font-weight: bold;
     margin: 10px 0 5px;
+    color: #ddd;
 }
 
 .message-ai p {
     margin: 8px 0;
+    color: #eee;
 }
 
 .message-ai ul {
     margin: 5px 0 10px 20px;
+    color: #eee;
 }
 
 .message-ai table {
@@ -105,36 +119,44 @@ body {
     width: 100%;
     margin-top: 10px;
     font-size: 14px;
+    color: #eee;
 }
 
 .message-ai th,
 .message-ai td {
-    border: 1px solid #ccc;
+    border: 1px solid #555;
     padding: 8px;
     text-align: left;
 }
 
 .message-ai th {
-    background-color: #f2f2f2;
+    background-color: #444;
+    color: #ddd;
 }
 
 .message-ai img {
     max-width: 100%;
     margin-top: 10px;
     border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3); /* Darker shadow for images */
 }
 
-/* Loader dot animation */
+/* Loader dot animation (adjust color for dark theme) */
 .loading-dots {
     display: inline-block;
     text-align: center;
     font-size: 20px;
     padding: 10px;
+    color: #ffffff; /* White dots */
 }
 .loading-dots span {
     display: inline-block;
     animation: bounce 1.2s infinite ease-in-out both;
+    background-color: #008E55; /* Nathan Green dots */
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 0 3px;
 }
 .loading-dots span:nth-child(2) {
     animation-delay: 0.2s;
@@ -144,8 +166,11 @@ body {
 }
 @keyframes bounce {
     0%, 80%, 100% {
-        transform: scale(0);
-    } 40% {
-        transform: scale(1);
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    40% {
+        transform: translateY(-10px);
+        opacity: 1;
     }
 }
