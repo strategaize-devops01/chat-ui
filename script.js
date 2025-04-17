@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const messageInput = document.getElementById('messageInput');
   const sendButton = document.getElementById('sendButton');
   const responseArea = document.getElementById('responseArea');
-  const webhookUrl = 'https://strategaize.app.n8n.cloud/webhook/337d424c-674f-4a19-b009-2f23a0eb3619/chat';
+  const webhookUrl = 'https://strategaize.app.n8n.cloud/webhook/chat-ui';
 
   sendButton.addEventListener('click', () => {
     const message = messageInput.value.trim();
