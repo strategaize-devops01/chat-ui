@@ -4,23 +4,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const messagesContainer = document.getElementById('messagesContainer');
     const webhookUrl = 'https://strategaize.app.n8n.cloud/webhook/chat-ui';
 
-    // --- Local Storage Chat History ---
+    // Generate or retrieve a persistent session ID
+    const sessionId = localStorage.getItem('chatSessionId') || (() => {
+        const newId = crypto.randomUUID?.() || Date.now().toString();
+        localStorage.setItem('chatSessionId', newId);
+        return newId;
+    })();
 
-    // Function to save the chat history to Local Storage
-    function saveChatHistory(history) {
-        localStorage.setItem('chatHistory', JSON.stringify(history));
-    }
-
-    // Function to load the chat history from Local Storage
-    function loadChatHistory() {
-        const storedHistory = localStorage.getItem('chatHistory');
-        return storedHistory ? JSON.parse(storedHistory) : [];
-    }
-
-    // Initialize chat history from Local Storage
+    // Load and save chat history
+    const loadChatHistory = () => JSON.parse(localStorage.getItem('chatHistory') || '[]');
+    const saveChatHistory = (history) => localStorage.setItem('chatHistory', JSON.stringify(history));
     let chatHistory = loadChatHistory();
 
-    // --- End Local Storage Chat History ---
+    // Utility to scroll to the bottom
+    const scrollToBottom = () => {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
 
     function createMessageElement(content, sender = 'bot') {
         const messageEl = document.createElement('div');
@@ -30,41 +29,38 @@ document.addEventListener('DOMContentLoaded', () => {
         avatar.classList.add('avatar', sender);
         messageEl.appendChild(avatar);
 
-        if (sender === 'bot') {
-            messageEl.innerHTML += marked.parse(content); // Append content after avatar
-        } else {
-            messageEl.innerHTML += content; // Append content after avatar
-        }
+        const contentWrapper = document.createElement('div');
+        contentWrapper.classList.add('content');
+        contentWrapper.innerHTML = sender === 'bot' ? marked.parse(content) : content;
+        messageEl.appendChild(contentWrapper);
 
         const timestamp = document.createElement('div');
         timestamp.classList.add('timestamp');
         timestamp.textContent = new Date().toLocaleTimeString();
-
         messageEl.appendChild(timestamp);
+
         messagesContainer.appendChild(messageEl);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        scrollToBottom();
 
-        // --- Save message to chat history ---
-        const message = { sender: sender, content: content, timestamp: new Date().toLocaleTimeString() };
-        chatHistory.push(message);
+        chatHistory.push({ sender, content, timestamp: new Date().toLocaleTimeString() });
         saveChatHistory(chatHistory);
-        // --- End Save message to chat history ---
-
-        return messageEl;
     }
 
     function showLoading() {
-        const loadingEl = document.createElement('div');
-        loadingEl.classList.add('message', 'bot', 'loading');
-        loadingEl.setAttribute('id', 'loadingMessage');
+        const loading = document.createElement('div');
+        loading.classList.add('message', 'bot', 'loading');
+        loading.setAttribute('id', 'loadingMessage');
 
         const avatar = document.createElement('div');
         avatar.classList.add('avatar', 'bot');
-        loadingEl.appendChild(avatar);
+        loading.appendChild(avatar);
 
-        loadingEl.innerHTML += 'Thinking...';
-        messagesContainer.appendChild(loadingEl);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        const dots = document.createElement('div');
+        dots.textContent = 'Thinking...';
+        loading.appendChild(dots);
+
+        messagesContainer.appendChild(loading);
+        scrollToBottom();
     }
 
     function hideLoading() {
@@ -72,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (loadingEl) loadingEl.remove();
     }
 
-    function createChartMessageWithOverlay(thumbnailSrc, fullChartSrc, chartDescription = '') {
+    function createChartMessageWithOverlay(thumbnailSrc, fullSrc, description = '') {
         const messageEl = document.createElement('div');
         messageEl.classList.add('message', 'bot');
 
@@ -87,106 +83,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const overlay = document.createElement('div');
         overlay.classList.add('chart-overlay');
-        const fullChart = document.createElement('img');
-        fullChart.src = fullChartSrc;
-        overlay.appendChild(fullChart);
-        const closeButton = document.createElement('span');
-        closeButton.classList.add('chart-close-button');
-        closeButton.textContent = 'x';
-        overlay.appendChild(closeButton);
 
-        if (chartDescription) {
-            const description = document.createElement('p');
-            description.textContent = chartDescription;
-            overlay.appendChild(description);
+        const fullImg = document.createElement('img');
+        fullImg.src = fullSrc;
+        overlay.appendChild(fullImg);
+
+        if (description) {
+            const desc = document.createElement('p');
+            desc.textContent = description;
+            overlay.appendChild(desc);
         }
 
-        messageEl.appendChild(overlay);
+        const closeBtn = document.createElement('span');
+        closeBtn.classList.add('chart-close-button');
+        closeBtn.textContent = '×';
+        overlay.appendChild(closeBtn);
+
+        closeBtn.addEventListener('click', () => overlay.style.display = 'none');
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.style.display = 'none';
+        });
 
         thumbnail.addEventListener('click', () => {
-            overlay.style.display = 'flex'; // Use flex for centering
+            overlay.style.display = 'flex';
         });
 
-        closeButton.addEventListener('click', () => {
-            overlay.style.display = 'none';
-        });
+        messageEl.appendChild(overlay);
+        messagesContainer.appendChild(messageEl);
+        scrollToBottom();
 
-        overlay.addEventListener('click', (event) => {
-            if (event.target === overlay) { // Close only if clicking outside the chart
-                overlay.style.display = 'none';
-            }
-        });
-
-        // --- Save message to chat history ---
-        const message = {
+        chatHistory.push({
             sender: 'bot',
-            content: `<img src="${thumbnailSrc}" alt="Chart Thumbnail">`, // Store thumbnail URL
+            content: `<img src="${thumbnailSrc}" />`,
             timestamp: new Date().toLocaleTimeString()
-        };
-        chatHistory.push(message);
+        });
         saveChatHistory(chatHistory);
-        // --- End Save message to chat history ---
+    }
 
-        return messageEl;
+    function sendMessage(message) {
+        createMessageElement(message, 'user');
+        showLoading();
+
+        fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chatInput: message, sessionId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            hideLoading();
+            if (!data || !data.output) {
+                createMessageElement('No response received.', 'bot');
+                return;
+            }
+
+            // Check if it's a chart object with images
+            if (typeof data.output === 'object' && data.output.chartThumbnail) {
+                createChartMessageWithOverlay(
+                    data.output.chartThumbnail,
+                    data.output.chartFull,
+                    data.output.chartDescription || ''
+                );
+            } else {
+                createMessageElement(data.output, 'bot');
+            }
+        })
+        .catch(err => {
+            hideLoading();
+            console.error(err);
+            createMessageElement('Something went wrong.', 'bot');
+        });
     }
 
     sendButton.addEventListener('click', () => {
         const message = messageInput.value.trim();
         if (!message) return;
-
-        // Add user message
-        createMessageElement(message, 'user');
         messageInput.value = '';
-
-        // Show loading animation
-        showLoading();
-
-        // Send message to webhook
-        fetch(webhookUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                chatInput: message,
-                sessionId: sessionId
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            hideLoading();
-            if (data.output) {
-                // Check if the output is a chart
-                if (data.output.chartThumbnail && data.output.chartFull) {
-                    const chartMessage = createChartMessageWithOverlay(
-                        data.output.chartThumbnail,
-                        data.output.chartFull,
-                        data.output.chartDescription // Optional
-                    );
-                    messagesContainer.appendChild(chartMessage);
-                } else {
-                    createMessageElement(data.output, 'bot'); // Normal text message
-                }
-            } else {
-                createMessageElement('No response received.', 'bot');
-            }
-        })
-        .catch(err => {
-            console.error('Error:', err);
-            hideLoading();
-            createMessageElement('Something went wrong.', 'bot');
-        });
+        sendMessage(message);
     });
 
-    messageInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
-            sendButton.click();
-        }
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') sendButton.click();
     });
 
-    // --- Display saved chat history on page load ---
-    chatHistory.forEach(message => {
-        createMessageElement(message.content, message.sender);
-    });
-    // --- End Display saved chat history on page load ---
+    // Load chat history on page load
+    chatHistory.forEach(m => createMessageElement(m.content, m.sender));
 });
