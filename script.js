@@ -15,7 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(response => response.text())
       .then(data => {
-        responseArea.textContent = data;
+        // If response is a QuickChart URL, show it as an image
+        if (data.startsWith('https://quickchart.io/chart')) {
+          responseArea.innerHTML = `<img src="${data}" alt="Chart" style="max-width: 100%;">`;
+        } else {
+          responseArea.textContent = data;
+        }
         messageInput.value = '';
       })
       .catch(error => {
