@@ -15,10 +15,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageEl = document.createElement('div');
         messageEl.classList.add('message', sender);
 
+        const avatar = document.createElement('div');
+        avatar.classList.add('avatar', sender);
+        messageEl.appendChild(avatar);
+
         if (sender === 'bot') {
-            messageEl.innerHTML = marked.parse(content);
+            messageEl.innerHTML += marked.parse(content); // Append content after avatar
         } else {
-            messageEl.textContent = content;
+            messageEl.innerHTML += content; // Append content after avatar
         }
 
         const timestamp = document.createElement('div');
@@ -34,7 +38,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const loadingEl = document.createElement('div');
         loadingEl.classList.add('message', 'bot', 'loading');
         loadingEl.setAttribute('id', 'loadingMessage');
-        loadingEl.textContent = 'Thinking...';
+
+        const avatar = document.createElement('div');
+        avatar.classList.add('avatar', 'bot');
+        loadingEl.appendChild(avatar);
+
+        loadingEl.innerHTML += 'Thinking...';
         messagesContainer.appendChild(loadingEl);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
