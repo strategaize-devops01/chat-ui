@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nathan Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="chat-container">
-        <div id="messagesContainer">
-            </div>
-        <div class="input-area">
-            <input type="text" id="messageInput" placeholder="Type your message..." />
-            <button id="sendButton">Send</button>
-        </div>
-    </div>
+        <aside class="sidebar">
+            <button id="new-chat-btn">New Chat</button>
+            <h2>Recent Chats</h2>
+            <ul id="chat-history-list">
+                </ul>
+        </aside>
 
-    <script src="script.js"></script>
+        <main class="chat-area">
+            <div id="message-list">
+                <div class="message bot">Welcome! How can I help you today?</div>
+            </div>
+            <footer class="chat-input-area">
+                <textarea id="message-input" placeholder="Enter your message..." rows="1"></textarea>
+                <button id="send-button">Send</button>
+            </footer>
+        </main>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
