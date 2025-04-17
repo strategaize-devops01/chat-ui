@@ -66,25 +66,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createChartMessageWithOverlay(thumbnailSrc, fullSrc, description = '') {
-        const chartImg = document.createElement('img');
-        chartImg.src = thumbnailSrc;
-        chartImg.classList.add('chart-outside');
-        messagesContainer.appendChild(chartImg);
+    const messageEl = document.createElement('div');
+    messageEl.classList.add('message', 'bot');
 
-        const descriptionText = document.createElement('div');
-        descriptionText.classList.add('chart-description');
-        descriptionText.innerHTML = marked.parse(description);
-        messagesContainer.appendChild(descriptionText);
-
-        scrollToBottom();
-
-        chatHistory.push({
-            sender: 'bot',
-            content: `<img src="${thumbnailSrc}" />`,
-            timestamp: new Date().toLocaleTimeString()
-        });
-        saveChatHistory(chatHistory);
+    // If it's ONLY a chart with no description, apply cleaner layout
+    const isChartOnly = !description?.trim();
+    if (isChartOnly) {
+        messageEl.classList.add('chart-only');
     }
+
+    // Avatar
+    const avatar = document.createElement('div');
+    avatar.classList.add('avatar', 'bot');
+    if (!isChartOnly) messageEl.appendChild(avatar); // Hide avatar for chart-only
+
+    // Thumbnail image
+    const thumbnail = document.createElement('img');
+    thumbnail.src = thumbnailSrc;
+    thumbnail.classList.add('chart-thumbnail');
+    messageEl.appendChild(thumbnail);
+
+    // Chart overlay (click to zoom)
+    const overlay = document.createElement('div');
+    overlay.classList.add('chart-overlay');
+
+    const fullImg = document.createElement('img');
+    fullImg.src = fullSrc;
+    overlay.appendChild(fullImg);
+
+    // Optional description
+    if (!isChartOnly && description) {
+        const desc = document.createElement('p');
+        desc.textContent = description;
+        overlay.appendChild(desc);
+    }
+
+    // Close button
+    const closeBtn = document.createElement('span');
+    closeBtn.classList.add('chart-close-button');
+    closeBtn.textContent = '×';
+    overlay.appendChild(closeBtn);
+
+    closeBtn.addEventListener('click', () => overlay.style.display = 'none');
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.style.display = 'none';
+    });
+
+    thumbnail.addEventListener('click', () => {
+        overlay.style.display = 'flex';
+    });
+
+    messageEl.appendChild(overlay);
+    messagesContainer.appendChild(messageEl);
+    scrollToBottom();
+
+    // Save to history
+    chatHistory.push({
+        sender: 'bot',
+        content: `<img src="${thumbnailSrc}" />`,
+        timestamp: new Date().toLocaleTimeString()
+    });
+    saveChatHistory(chatHistory);
+}
 
     function sendMessage(message) {
         createMessageElement(message, 'user');
