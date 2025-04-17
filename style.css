@@ -1,4 +1,4 @@
-/* === GLOBAL === */
+/* General page layout */
 body {
   font-family: 'Google Sans', Roboto, Arial, sans-serif;
   background-color: #1e1e1e;
@@ -10,91 +10,93 @@ body {
   min-height: 100vh;
 }
 
-/* === CHAT CONTAINER === */
 .chat-container {
   background-color: #2a2a2e;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   width: 95%;
-  max-width: 900px;
+  max-width: 800px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
   color: #e0e0e0;
-  height: 95vh;
 }
 
-/* === MESSAGE AREA === */
 #messagesContainer {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
+  max-height: 75vh;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  scroll-behavior: smooth;
+  gap: 10px;
 }
 
-/* === INDIVIDUAL MESSAGE === */
+/* Message bubbles */
 .message {
-  padding: 14px 20px;
-  border-radius: 18px;
-  max-width: 75%;
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 16px;
   white-space: pre-wrap;
-  line-height: 1.6;
+  line-height: 1.5;
   word-break: break-word;
   position: relative;
-  font-size: 15px;
-  animation: fadeIn 0.3s ease;
 }
 
 .message.user {
-  background-color: #1f1f1f;
-  color: #ccc;
   align-self: flex-end;
+  background-color: #333;
+  color: #b3b3b3;
   border-bottom-right-radius: 4px;
+  flex-direction: row-reverse;
 }
 
 .message.bot {
-  background-color: #333;
-  color: #e8e8e8;
   align-self: flex-start;
+  background-color: #444;
+  color: #d4d4d4;
   border-bottom-left-radius: 4px;
 }
 
-/* === AVATAR CIRCLE === */
 .avatar {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background-color: #008E55;
-  display: inline-block;
-  margin-right: 10px;
-  vertical-align: middle;
+  background-color: #008e55;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
 }
 
 .avatar.user {
   background-color: #555;
 }
 
-/* === TIMESTAMP === */
 .timestamp {
-  font-size: 11px;
+  font-size: 10px;
   color: #888;
-  margin-top: 4px;
-  text-align: right;
+  position: absolute;
+  bottom: -14px;
+  right: 10px;
 }
 
 .message.bot .timestamp {
-  text-align: left;
+  left: 10px;
+  right: auto;
 }
 
-/* === INPUT AREA === */
+/* Input area */
 .input-area {
   display: flex;
-  padding: 14px 20px;
+  padding: 15px 20px;
   gap: 10px;
-  background-color: #2a2a2e;
+  background-color: #2c2c2c;
   border-top: 1px solid #444;
 }
 
@@ -102,20 +104,20 @@ body {
   flex-grow: 1;
   padding: 14px;
   font-size: 16px;
-  border: 1px solid #444;
+  border: 1px solid #555;
   border-radius: 24px;
+  background-color: #333;
+  color: #e0e0e0;
   outline: none;
-  background-color: #1f1f1f;
-  color: #eee;
 }
 
 #messageInput::placeholder {
-  color: #666;
+  color: #777;
 }
 
 #sendButton {
-  padding: 14px 22px;
-  background-color: #008E55;
+  padding: 14px 24px;
+  background-color: #008e55;
   color: white;
   border: none;
   border-radius: 24px;
@@ -128,88 +130,9 @@ body {
   background-color: #006b44;
 }
 
-/* === MARKDOWN STYLES === */
-.message.bot h1, .message.bot h2, .message.bot h3 {
-  color: #cfcfcf;
-  margin-top: 12px;
-}
-
-.message.bot p, .message.bot ul, .message.bot ol, .message.bot li, .message.bot blockquote, .message.bot code {
-  color: #e0e0e0;
-}
-
-.message.bot pre {
-  background-color: #1e1e1e;
-  padding: 10px;
-  border-radius: 6px;
-  overflow-x: auto;
-}
-
-.message.bot table {
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-.message.bot th, .message.bot td {
-  border: 1px solid #555;
-  padding: 6px 10px;
-  text-align: left;
-}
-
-.message.bot th {
-  background-color: #444;
-}
-
-/* === CHART STYLING === */
-.chart-thumbnail {
-  cursor: pointer;
-  max-width: 100%;
-  border-radius: 10px;
-  margin-top: 12px;
-  transition: transform 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-}
-
-.chart-thumbnail:hover {
-  transform: scale(1.03);
-}
-
-.chart-overlay {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.95);
-  z-index: 999;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-.chart-overlay img {
-  max-width: 90%;
-  max-height: 90%;
-  border-radius: 16px;
-}
-
-.chart-close-button {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 24px;
-  color: white;
-  background-color: rgba(0,0,0,0.5);
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-/* === LOADING === */
+/* Bot loading animation */
 .message.bot.loading {
-  color: #888;
-  font-style: italic;
+  color: #999;
 }
 
 .message.bot.loading::after {
@@ -220,27 +143,93 @@ body {
 }
 
 @keyframes ellipsis {
-  0%   { content: '.'; }
-  33%  { content: '..'; }
-  66%  { content: '...'; }
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
   100% { content: ''; }
 }
 
-/* === ANIMATIONS === */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Markdown formatting in bot messages */
+.message.bot h1,
+.message.bot h2,
+.message.bot h3 {
+  color: #ccc;
 }
 
-/* === RESPONSIVENESS === */
-@media (max-width: 600px) {
-  .chat-container {
-    border-radius: 0;
-    width: 100%;
-    height: 100vh;
-  }
+.message.bot p,
+.message.bot ul,
+.message.bot ol,
+.message.bot li,
+.message.bot blockquote,
+.message.bot code {
+  color: #d4d4d4;
+}
 
-  .message {
-    max-width: 90%;
-  }
+.message.bot table,
+.message.bot th,
+.message.bot td {
+  border-color: #555;
+}
+
+.message.bot th {
+  background-color: #444;
+  color: #ccc;
+}
+
+/* Chart Thumbnail */
+.chart-thumbnail {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0,0,0,0.4);
+}
+
+/* Expanded Chart Overlay */
+.chart-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.chart-overlay img {
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.chart-close-button {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 6px;
+}
+
+.chart-overlay p {
+  color: white;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Responsive: Full-width message for charts outside bubbles */
+.message.bot img.chart-thumbnail {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 12px;
+  margin: 10px 0;
+  display: block;
 }
